@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+# Adjust lib path
+_lib=File.expand_path(File.dirname(__FILE__) + '/../lib')
+$:.unshift(_lib) unless $:.include?(_lib)
+
+require 'dldinternet/aws/rds'
+include DLDInternet::AWS::RDS
+
+require 'mechanize'
+mechanize = Mechanize.new
+mechanize.open_timeout = 5
+mechanize.read_timeout = 10
+
+require 'awesome_print'
+require 'colorize'
+
+begin
+  puts getInstanceTypes(:mechanize => mechanize).ai
+rescue Timeout::Error => e
+  puts "Unable to retrieve instance type details in a reasonable time (#{mechanize.open_timeout}s). Giving up ...".light_red
+end
