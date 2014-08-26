@@ -30,7 +30,7 @@ module DLDInternet
           require 'nokogiri'
 
           nk = Nokogiri::HTML(page.body)
-          div = nk.css('div#page-content')
+          div = nk.css('div.page-content')
           # noinspection RubyAssignmentExpressionInConditionalInspection
           if div = find_div(div, %r'^<div\s+class="nine columns content-with-nav')
             # noinspection RubyAssignmentExpressionInConditionalInspection
