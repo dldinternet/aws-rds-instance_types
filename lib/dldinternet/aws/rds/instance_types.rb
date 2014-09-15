@@ -42,7 +42,7 @@ module DLDInternet
                 as = d.css('div div h2 a')
                 as.each do |a|
                   # puts "'#{a.text}'"
-                  if a.text == ' DB Instance Classes '
+                  if a.text.match %r'\s*DB Instance Classes\s*'
                     itm = d
                     break
                   end
@@ -50,10 +50,16 @@ module DLDInternet
                 break if itm
                 idx += 1
               end
-              itm = divs[idx+1+2+2]
-              table = itm.css('div table').first
-              # puts "#{idx}: #{table.to_s}"
-              @instance_types = scrapeTable(HEADINGS, table)
+              if idx < divs.count
+                divs = divs[idx..-1]
+                table = nil
+                divs.each do |d|
+                  table = d.css('div.aws-table table')
+                  break if table
+                end
+
+                @instance_types = scrapeTable(HEADINGS, table) if table
+              end
             end
           end
         end
@@ -65,7 +71,7 @@ module DLDInternet
         divs = nk.search('div')
         if divs.count > 0
           nine = divs.select { |div| div.to_s.match regex }
-          if nine.count == 1
+          if nine.count >= 1
             nine = nine.shift
             ret = nine
           end
@@ -75,7 +81,7 @@ module DLDInternet
 
       # ---------------------------------------------------------------------------------------------------------------
       def scrapeTable(cHeadings,table)
-        raise Error.new 'Cannot find instance type table' unless table.is_a?(Nokogiri::XML::Element)
+        raise Error.new 'Cannot find instance type table' unless (table.is_a?(Nokogiri::XML::Element) or table.is_a?(Nokogiri::XML::NodeSet))
         rows = table.search('tr')[0..-1]
         head = rows.shift
 
