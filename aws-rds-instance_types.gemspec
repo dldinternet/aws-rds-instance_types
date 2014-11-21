@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 
-require File.expand_path('../lib/aws/rds/instance_types/version', __FILE__)
+require File.expand_path('../lib/dldinternet/aws/rds/instance_types/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name          = "aws-rds-instance_types"
-  gem.version       = Aws::Rds::InstanceTypes::VERSION
+  gem.version       = DLDInternet::AWS::RDS::Instance_Types::VERSION
   gem.description   =
   gem.summary       = %q{Retrieve an up to date list of valid AWS RDS Instance Types directly from Amazon Web Services official site.}
   gem.license       = 'Apachev2'
@@ -21,8 +21,13 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rubygems-tasks', '~> 0.2'
 
+  gem.add_runtime_dependency('thor', ['>= 0.19.1'])
   gem.add_runtime_dependency(%q<mechanize>, ['>= 2.7.2'])
   gem.add_runtime_dependency(%q<nokogiri>, ['>= 1.5.0'])
-  gem.add_runtime_dependency(%q<awesome_print>, ['>= 1.2.0'])
-  gem.add_runtime_dependency(%q<colorize>, ['>= 0.7.2'])
+  gem.add_dependency 'awesome_print', '> 0'
+  gem.add_dependency 'inifile', '> 0'
+  gem.add_dependency 'colorize', '>= 0'
+  gem.add_dependency 'dldinternet-mixlib-logging', '>= 0.4.3'
+  gem.add_dependency 'psych'
+  gem.add_dependency 'json'
 end
