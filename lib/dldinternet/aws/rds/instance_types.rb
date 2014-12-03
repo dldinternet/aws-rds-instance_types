@@ -5,7 +5,7 @@ module DLDInternet
 
         class << self
 
-          require 'dldinternet/aws/rds/instance_types/mixins/RDS_instance_types'
+          require 'dldinternet/aws/rds/instance_types/mixins/rds_instance_types'
           include DLDInternet::AWS::RDS::Instance_Types::MixIns::RDS_Instance_Types
 
         end
