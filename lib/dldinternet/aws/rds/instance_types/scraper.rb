@@ -35,7 +35,8 @@ module DLDInternet
               require 'nokogiri'
 
               nk = Nokogiri::HTML(page.body)
-              div = nk.css('div.page-content')
+              div = nk.css('div#aws-page-content')
+              div = nk.css('div.page-content') unless div.to_s.match %r'^<div id="'m
               # noinspection RubyAssignmentExpressionInConditionalInspection
               if div = find_div(div, %r'^<div\s+class="nine columns content-with-nav')
                 # noinspection RubyAssignmentExpressionInConditionalInspection
@@ -60,7 +61,7 @@ module DLDInternet
                     table = nil
                     divs.each do |d|
                       table = d.css('div.aws-table table')
-                      break if table
+                      break if table.to_s.match(%r'^<table'i)
                     end
 
                     @instance_types = scrapeTable(HEADINGS, table) if table
