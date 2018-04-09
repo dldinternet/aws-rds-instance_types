@@ -1,3 +1,7 @@
+require 'dldinternet/aws/rds/instance_types/version'
+require 'dldinternet/aws/rds/instance_types/error'
+require 'dldinternet/aws/rds/instance_types/cli'
+
 module DLDInternet
   module AWS
     module RDS

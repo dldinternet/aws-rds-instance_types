@@ -1,23 +1,20 @@
 require 'thor'
 require 'awesome_print'
 require 'colorize'
-require 'dldinternet/aws/rds/instance_types/version'
-require 'dldinternet/aws/rds/instance_types/error'
-require 'dldinternet/aws/rds/instance_types/scraper'
-require 'dldinternet/aws/rds/instance_types/cli'
 require 'dldinternet/aws/rds/instance_types'
 
 module DLDInternet
   module AWS
     module RDS
       module Instance_Types
+        # noinspection RubyParenthesesAfterMethodCallInspection
         class Cli < Thor
           class_option :verbose,      :type => :boolean
           class_option :debug,        :type => :boolean
           class_option :log_level,    :type => :string, :banner => 'Log level ([:trace, :debug, :info, :step, :warn, :error, :fatal, :todo])'
           class_option :inifile,      :type => :string
           class_option :help,         :type => :boolean
-          class_option :format,       :type => :string, :default => 'pretty', :banner => '[:pretty, :yaml, :json]'
+          class_option :format,       :type => :string, :default => 'pretty', :banner => '[:pretty, :yaml, :json]', :aliases => ['--output']
 
           no_commands do
 
@@ -48,7 +45,7 @@ module DLDInternet
             parse_options
             puts 'get instance types' if options[:verbose]
 
-            it = DLDInternet::AWS::RDS::Instance_Types.getRDS_Instance_Types()
+            it = DLDInternet::AWS::RDS::Instance_Types.get_rds_instance_types()
             case options[:format]
             when /yaml/
               puts it.to_yaml line_width: 1024, indentation: 4, canonical: false
@@ -60,22 +57,22 @@ module DLDInternet
             0
           end
 
-          desc 'load ARGS', 'load instance types'
+          desc 'load PATH', 'load instance types'
           def load(path)
             parse_options
             puts 'load instance types' if options[:verbose]
 
-            it = DLDInternet::AWS::RDS::Instance_Types.loadRDS_Instance_Types(path)
+            it = DLDInternet::AWS::RDS::Instance_Types.load_rds_instance_types(path)
             ap it
           end
 
-          desc 'save', 'save instance types'
+          desc 'save PATH', 'save instance types'
           def save(path)
             parse_options
             puts 'save instance types' if options[:verbose]
 
-            it = DLDInternet::AWS::Rds::Instance_Types.getRDS_Instance_Types()
-            DLDInternet::AWS::Rds::Instance_Types.saveRDS_Instance_Types(path, it)
+            it = DLDInternet::AWS::RDS::Instance_Types.get_rds_instance_types()
+            DLDInternet::AWS::RDS::Instance_Types.save_rds_instance_types(path, it)
           end
 
           default_task 'get'
@@ -84,4 +81,3 @@ module DLDInternet
     end
   end
 end
-

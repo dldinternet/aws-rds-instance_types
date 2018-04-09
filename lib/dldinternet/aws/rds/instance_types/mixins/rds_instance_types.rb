@@ -2,7 +2,8 @@ require 'thor'
 require 'awesome_print'
 require 'inifile'
 require 'colorize'
-require 'dldinternet/aws/rds/instance_types/scraper'
+require 'dldinternet/aws/ec2/instance_types/aws-pricing-api-client'
+require 'yaml'
 
 module DLDInternet
   module AWS
@@ -11,7 +12,7 @@ module DLDInternet
         module MixIns
           module RDS_Instance_Types
 
-            def getFileFormat(path)
+            def get_file_format(path)
               format = case File.extname(File.basename(path)).downcase
                          when /json|js/
                            'json'
@@ -22,8 +23,8 @@ module DLDInternet
                        end
             end
 
-            def saveRDS_Instance_Types(path,it)
-              format = getFileFormat(path)
+            def save_rds_instance_types(path, it)
+              format = get_file_format(path)
               begin
                 File.open path, File::CREAT|File::TRUNC|File::RDWR, 0644 do |f|
                   case format
@@ -43,13 +44,14 @@ module DLDInternet
               0
             end
 
-            def loadRDS_Instance_Types(path)
-              format = getFileFormat(path)
+            def load_rds_instance_types(path)
+              format = get_file_format(path)
               spec = File.read(path)
               case format
                 when /json/
                   JSON.parse(spec)
-                #when /yaml/
+              when /yaml/
+                  YAML.load File.read(path)
                 else
                   begin
                     YAML.load(spec)
@@ -61,20 +63,15 @@ module DLDInternet
               end
             end
 
-            def getRDS_Instance_Types(mechanize=nil)
-              unless mechanize
-                require 'mechanize'
-                mechanize = ::Mechanize.new
-                mechanize.open_timeout = 5
-                mechanize.read_timeout = 10
-              end
+            # noinspection RubyParenthesesAfterMethodCallInspection
+            def get_rds_instance_types()
 
-              scraper = DLDInternet::AWS::RDS::Instance_Types::Scraper.new()
+              client = DLDInternet::AWS::EC2::Instance_Types::AWSPricingAPIClient.new()
 
               begin
-                return scraper.getInstanceTypes(:mechanize => mechanize)
-              rescue Timeout::Error => e
-                puts "Unable to retrieve instance type details in a reasonable time (#{mechanize.open_timeout}s). Giving up ...".light_red
+                return client.get_instance_types(url: 'https://ec2instances.info/rds/instances.json')
+              rescue Exception => e
+                puts "Unable to retrieve instance type details. Giving up ...".light_red
                 return nil
               end
             end
